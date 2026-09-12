@@ -1,0 +1,40 @@
+{
+  "name": "swc-plugin-evaluate-polyfills",
+  "version": "0.1.0",
+  "description": "An SWC plugin that statically evaluates inline polyfill checks at build time.",
+  "main": "target/wasm32-wasip1/release/swc_plugin_evaluate_polyfills.wasm",
+  "exports": {
+    ".": "./target/wasm32-wasip1/release/swc_plugin_evaluate_polyfills.wasm"
+  },
+  "files": [
+    "target/wasm32-wasip1/release/swc_plugin_evaluate_polyfills.wasm"
+  ],
+  "scripts": {
+    "build": "cargo build-wasip1 --release",
+    "test": "cargo test",
+    "prepack": "npm test && npm run build",
+    "fixture": "UPDATE=1 cargo test --test fixture"
+  },
+  "peerDependencies": {
+    "@swc/core": "^1.15.0"
+  },
+  "peerDependenciesMeta": {
+    "@swc/core": {
+      "optional": true
+    }
+  },
+  "preferUnplugged": true,
+  "author": {
+    "name": "Alexander Zaytsev",
+    "email": "zaytsev126@gmail.com",
+    "url": "https://x.com/_shoonia"
+  },
+  "license": "MIT",
+  "keywords": [
+    "swc-plugin",
+    "optimization",
+    "minifier",
+    "minify",
+    "minimize"
+  ]
+}
