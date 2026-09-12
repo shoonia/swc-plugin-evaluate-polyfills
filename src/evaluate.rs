@@ -130,7 +130,7 @@ pub fn evaluate(bin: &BinExpr, unresolved: Mark, browser: bool) -> Option<bool> 
                         return is_global(ident, unresolved).then_some(true);
                     }
                 } else if let Some(memb) = bin.right.as_member() {
-                    if let Some(ident) = as_prototype(&memb) {
+                    if let Some(ident) = as_prototype(memb) {
                         let name = ident.sym.as_ref();
 
                         if is_prototype_method(name, key)

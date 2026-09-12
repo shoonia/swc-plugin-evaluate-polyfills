@@ -10,7 +10,7 @@ pub fn matches_pattern(expr: &Expr, parts: &[&str]) -> bool {
             return false;
         };
 
-        if !member.prop.as_ident().is_some_and(|i| i.sym == *part) {
+        if member.prop.as_ident().is_none_or(|i| i.sym != *part) {
             return false;
         }
 

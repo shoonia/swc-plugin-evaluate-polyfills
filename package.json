@@ -13,7 +13,8 @@
     "build": "cargo build-wasip1 --release",
     "test": "cargo test",
     "prepack": "npm test && npm run build",
-    "fixture": "UPDATE=1 cargo test --test fixture"
+    "fixture": "UPDATE=1 cargo test --test fixture",
+    "lint": "cargo clippy -- -D warnings"
   },
   "peerDependencies": {
     "@swc/core": "^1.15.0"

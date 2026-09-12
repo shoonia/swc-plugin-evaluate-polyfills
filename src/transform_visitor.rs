@@ -22,7 +22,6 @@ fn replace_to_bool(expr: &Expr, value: bool) -> Bool {
         value,
         span: expr.span(),
     }
-    .into()
 }
 
 pub struct TransformVisitor {
@@ -58,7 +57,7 @@ impl VisitMut for TransformVisitor {
 
         match stmt {
             Stmt::Expr(value) => {
-                if let Some(_) = self.checker(&*value.expr) {
+                if self.checker(&value.expr).is_some() {
                     *stmt = EmptyStmt { span: value.span }.into()
                 }
             }
@@ -137,7 +136,7 @@ impl VisitMut for TransformVisitor {
                     return;
                 }
 
-                if let Some(value) = self.checker(&*unary.arg) {
+                if let Some(value) = self.checker(&unary.arg) {
                     *expr = replace_to_bool(expr, !value).into();
                 }
             }
