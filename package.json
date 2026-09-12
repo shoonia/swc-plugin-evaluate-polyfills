@@ -1,6 +1,7 @@
 {
   "name": "swc-plugin-evaluate-polyfills",
   "version": "0.1.0",
+  "type": "module",
   "description": "An SWC plugin that statically evaluates inline polyfill checks at build time.",
   "main": "target/wasm32-wasip1/release/swc_plugin_evaluate_polyfills.wasm",
   "exports": {
@@ -17,7 +18,7 @@
     "lint": "cargo clippy -- -D warnings"
   },
   "peerDependencies": {
-    "@swc/core": "^1.15.0"
+    "@swc/core": "^1.16.2"
   },
   "peerDependenciesMeta": {
     "@swc/core": {
