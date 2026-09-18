@@ -11,7 +11,7 @@
     "target/wasm32-wasip1/release/swc_plugin_evaluate_polyfills.wasm"
   ],
   "scripts": {
-    "build": "cargo build-wasip1 --release",
+    "build": "sh build.sh",
     "test": "cargo test",
     "prepack": "npm test && npm run build",
     "fixture": "UPDATE=1 cargo test --test fixture",
