@@ -113,7 +113,7 @@ pub fn is_static_method(obj: &str, prop: &str, browser: bool) -> bool {
                 | "tanh"
                 | "trunc"
         ),
-        "JSON" => matches!(prop, "parse" | "stringify"),
+        "JSON" => matches!(prop, "parse" | "stringify" | "isRawJSON" | "rawJSON"),
         "Error" => prop == "captureStackTrace",
         "URL" => matches!(
             prop,
