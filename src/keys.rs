@@ -1,29 +1,5 @@
 use std::matches;
 
-fn is_window_global_fn(prop: &str) -> bool {
-    matches!(
-        prop,
-        "setTimeout"
-            | "clearTimeout"
-            | "setInterval"
-            | "clearInterval"
-            | "requestAnimationFrame"
-            | "cancelAnimationFrame"
-            | "requestIdleCallback"
-            | "cancelIdleCallback"
-            | "fetch"
-            | "postMessage"
-            | "addEventListener"
-            | "removeEventListener"
-            | "dispatchEvent"
-            | "CustomEvent"
-            | "MutationObserver"
-            | "IntersectionObserver"
-            | "PerformanceObserver"
-            | "ResizeObserver"
-    )
-}
-
 pub fn is_static_method(obj: &str, prop: &str, browser: bool) -> bool {
     match obj {
         "Array" => matches!(prop, "from" | "fromAsync" | "isArray" | "of"),
@@ -156,7 +132,7 @@ pub fn is_static_method(obj: &str, prop: &str, browser: bool) -> bool {
                             | "addEventListener"
                             | "removeEventListener"
                     ),
-                    "window" => is_window_global_fn(prop),
+                    "window" => is_built_in_constructor(prop, browser),
                     _ => false,
                 }
         }
@@ -370,7 +346,28 @@ pub fn is_built_in_constructor(name: &str, browser: bool) -> bool {
             | "TextEncoderStream"
             | "encodeURIComponent"
             | "decodeURIComponent"
-    ) || (browser && is_window_global_fn(name))
+    ) || browser
+        && matches!(
+            name,
+            "setTimeout"
+                | "clearTimeout"
+                | "setInterval"
+                | "clearInterval"
+                | "requestAnimationFrame"
+                | "cancelAnimationFrame"
+                | "requestIdleCallback"
+                | "cancelIdleCallback"
+                | "fetch"
+                | "postMessage"
+                | "addEventListener"
+                | "removeEventListener"
+                | "dispatchEvent"
+                | "CustomEvent"
+                | "MutationObserver"
+                | "IntersectionObserver"
+                | "PerformanceObserver"
+                | "ResizeObserver"
+        )
 }
 
 pub fn is_built_in_member(name: &str, browser: bool) -> bool {

@@ -1,7 +1,7 @@
 use crate::{evaluate::*, matches_pattern::*};
 use std::matches;
 use swc_core::{
-    common::{util::take::Take, Mark, Spanned},
+    common::{Mark, Spanned, util::take::Take},
     ecma::{
         ast::{
             BinExpr, BinaryOp, Bool, CallExpr, Callee, EmptyStmt, Expr, Lit, MemberExpr,
