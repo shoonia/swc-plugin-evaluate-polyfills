@@ -343,9 +343,14 @@ pub fn is_built_in_constructor(name: &str, browser: bool) -> bool {
             | "FinalizationRegistry"
             | "AggregateError"
             | "ReadableStream"
+            | "TextEncoder"
+            | "TextDecoder"
             | "TextEncoderStream"
+            | "TextDecoderStream"
+            | "TransformStream"
             | "encodeURIComponent"
             | "decodeURIComponent"
+            | "Iterator"
     ) || browser
         && matches!(
             name,
