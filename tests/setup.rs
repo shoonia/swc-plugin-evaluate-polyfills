@@ -1,10 +1,10 @@
 use swc_core::{
-    common::Mark,
+    common::{Mark, SyntaxContext},
     ecma::{
         ast::Pass,
         parser::{EsSyntax, Syntax},
         transforms::{base::resolver, testing::test_transform},
-        visit::{visit_mut_pass, VisitMut},
+        visit::{VisitMut, visit_mut_pass},
     },
 };
 use swc_plugin_evaluate_polyfills::transform_visitor::TransformVisitor;
@@ -21,7 +21,7 @@ pub fn visitor(browser: bool) -> impl VisitMut + Pass {
     (
         resolver(unresolved_mark, Mark::new(), false),
         visit_mut_pass(TransformVisitor {
-            unresolved_mark,
+            unresolved_ctxt: SyntaxContext::empty().apply_mark(unresolved_mark),
             browser,
         }),
     )

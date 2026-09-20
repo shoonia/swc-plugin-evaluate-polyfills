@@ -1,7 +1,7 @@
 use crate::{evaluate::*, matches_pattern::*};
 use std::matches;
 use swc_core::{
-    common::{Mark, Spanned, util::take::Take},
+    common::{Spanned, SyntaxContext, util::take::Take},
     ecma::{
         ast::{
             BinaryOp, Bool, CallExpr, Callee, EmptyStmt, Expr, Lit, MemberExpr, MemberProp, Stmt,
@@ -25,7 +25,7 @@ fn replace_to_bool(expr: &Expr, value: bool) -> Bool {
 }
 
 pub struct TransformVisitor {
-    pub unresolved_mark: Mark,
+    pub unresolved_ctxt: SyntaxContext,
     pub browser: bool,
 }
 
@@ -33,7 +33,7 @@ impl TransformVisitor {
     fn checker(&self, expr: &Expr) -> Option<bool> {
         match expr {
             Expr::Member(member) => {
-                evaluate_member(member, self.unresolved_mark, self.browser).map(|_| true)
+                evaluate_member(member, self.unresolved_ctxt, self.browser).map(|_| true)
             }
             Expr::Bin(bin) => {
                 if matches!(bin.op, BinaryOp::LogicalOr | BinaryOp::NullishCoalescing) {
@@ -78,12 +78,12 @@ impl VisitMut for TransformVisitor {
         match expr {
             Expr::Bin(bin) => match &bin.op {
                 BinaryOp::In => {
-                    if let Some(value) = evaluate_in(bin, self.unresolved_mark, self.browser) {
+                    if let Some(value) = evaluate_in(bin, self.unresolved_ctxt, self.browser) {
                         *expr = replace_to_bool(expr, value).into();
                     }
                 }
                 BinaryOp::EqEq | BinaryOp::EqEqEq | BinaryOp::NotEq | BinaryOp::NotEqEq => {
-                    if let Some(value) = evaluate_bin(bin, self.unresolved_mark, self.browser) {
+                    if let Some(value) = evaluate_bin(bin, self.unresolved_ctxt, self.browser) {
                         *expr = replace_to_bool(expr, value).into();
                     }
                 }

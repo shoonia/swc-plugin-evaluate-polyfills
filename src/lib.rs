@@ -6,6 +6,7 @@ pub mod transform_visitor;
 use crate::transform_visitor::TransformVisitor;
 use serde::Deserialize;
 use swc_core::{
+    common::SyntaxContext,
     ecma::{ast::Program, visit::visit_mut_pass},
     plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
 };
@@ -17,14 +18,14 @@ pub struct PluginOptions {
 }
 
 #[plugin_transform]
-pub fn process_transform(program: Program, metadata: TransformPluginProgramMetadata) -> Program {
-    let options: PluginOptions = metadata
+pub fn process_transform(program: Program, data: TransformPluginProgramMetadata) -> Program {
+    let options: PluginOptions = data
         .get_transform_plugin_config()
-        .and_then(|config_json| serde_json::from_str(&config_json).ok())
+        .and_then(|config| serde_json::from_str(&config).ok())
         .unwrap_or_default();
 
     program.apply(visit_mut_pass(&mut TransformVisitor {
-        unresolved_mark: metadata.unresolved_mark,
+        unresolved_ctxt: SyntaxContext::empty().apply_mark(data.unresolved_mark),
         browser: options.browser,
     }))
 }
