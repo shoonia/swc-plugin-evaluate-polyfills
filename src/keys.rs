@@ -275,21 +275,22 @@ pub fn is_prototype_method(obj: &str, prop: &str) -> bool {
     }
 }
 
-pub fn is_regexp_prototype_property(prop: &str) -> bool {
-    matches!(
-        prop,
-        "lastIndex"
-            | "dotAll"
-            | "flags"
-            | "global"
-            | "hasIndices"
-            | "ignoreCase"
-            | "multiline"
-            | "source"
-            | "sticky"
-            | "unicode"
-            | "unicodeSets"
-    )
+pub fn is_regexp_prototype_property(obj: &str, prop: &str) -> bool {
+    obj == "RegExp"
+        && matches!(
+            prop,
+            "lastIndex"
+                | "dotAll"
+                | "flags"
+                | "global"
+                | "hasIndices"
+                | "ignoreCase"
+                | "multiline"
+                | "source"
+                | "sticky"
+                | "unicode"
+                | "unicodeSets"
+        )
 }
 
 pub fn is_well_known_symbol(obj: &str, prop: &str) -> bool {

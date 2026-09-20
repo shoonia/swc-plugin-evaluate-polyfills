@@ -4,8 +4,8 @@ use swc_core::{
     common::{Mark, Spanned, util::take::Take},
     ecma::{
         ast::{
-            BinExpr, BinaryOp, Bool, CallExpr, Callee, EmptyStmt, Expr, Lit, MemberExpr,
-            MemberProp, Stmt, UnaryOp,
+            BinaryOp, Bool, CallExpr, Callee, EmptyStmt, Expr, Lit, MemberExpr, MemberProp, Stmt,
+            UnaryOp,
         },
         visit::{VisitMut, VisitMutWith},
     },
@@ -30,10 +30,6 @@ pub struct TransformVisitor {
 }
 
 impl TransformVisitor {
-    fn evaluate(&self, bin: &BinExpr) -> Option<bool> {
-        evaluate(bin, self.unresolved_mark, self.browser)
-    }
-
     fn checker(&self, expr: &Expr) -> Option<bool> {
         match expr {
             Expr::Member(member) => {
@@ -81,12 +77,13 @@ impl VisitMut for TransformVisitor {
 
         match expr {
             Expr::Bin(bin) => match &bin.op {
-                BinaryOp::In
-                | BinaryOp::EqEq
-                | BinaryOp::EqEqEq
-                | BinaryOp::NotEq
-                | BinaryOp::NotEqEq => {
-                    if let Some(value) = self.evaluate(bin) {
+                BinaryOp::In => {
+                    if let Some(value) = evaluate_in(bin, self.unresolved_mark, self.browser) {
+                        *expr = replace_to_bool(expr, value).into();
+                    }
+                }
+                BinaryOp::EqEq | BinaryOp::EqEqEq | BinaryOp::NotEq | BinaryOp::NotEqEq => {
+                    if let Some(value) = evaluate_bin(bin, self.unresolved_mark, self.browser) {
                         *expr = replace_to_bool(expr, value).into();
                     }
                 }
@@ -160,17 +157,17 @@ impl VisitMut for TransformVisitor {
             return;
         }
 
-        if let Some(expr) = call.callee.as_expr() {
-            if matches_pattern(expr.as_ref(), OBJ_HAS_OWN_PROPERTY_CALL) {
-                call.callee = Callee::Expr(
-                    MemberExpr {
-                        span: expr.span(),
-                        obj: Expr::Ident("Object".into()).into(),
-                        prop: MemberProp::Ident("hasOwn".into()),
-                    }
-                    .into(),
-                )
-            }
+        if let Some(expr) = call.callee.as_expr()
+            && matches_pattern(expr, OBJ_HAS_OWN_PROPERTY_CALL)
+        {
+            call.callee = Callee::Expr(
+                MemberExpr {
+                    span: expr.span(),
+                    obj: Expr::Ident("Object".into()).into(),
+                    prop: MemberProp::Ident("hasOwn".into()),
+                }
+                .into(),
+            )
         }
     }
 }

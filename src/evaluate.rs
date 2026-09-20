@@ -34,8 +34,8 @@ pub fn evaluate_member(member: &MemberExpr, unresolved: Mark, browser: bool) -> 
 
     match member.obj.as_ref() {
         Expr::Ident(obj) => {
-            let o = obj.sym.as_ref();
-            let p = prop.sym.as_ref();
+            let o = obj.sym.as_str();
+            let p = prop.sym.as_str();
 
             if is_static_method(o, p, browser) {
                 return is_global(obj, unresolved).then_some(FUN);
@@ -46,10 +46,10 @@ pub fn evaluate_member(member: &MemberExpr, unresolved: Mark, browser: bool) -> 
             }
         }
         Expr::Member(memb) => {
-            if let Some(ident) = as_prototype(memb) {
-                if is_prototype_method(ident.sym.as_ref(), prop.sym.as_ref()) {
-                    return is_global(ident, unresolved).then_some(FUN);
-                }
+            if let Some(ident) = as_prototype(memb)
+                && is_prototype_method(ident.sym.as_str(), prop.sym.as_str())
+            {
+                return is_global(ident, unresolved).then_some(FUN);
             }
         }
         _ => {}
@@ -68,7 +68,7 @@ fn evaluate_typeof(unary: &UnaryExpr, unresolved: Mark, browser: bool) -> Option
     }
 
     if let Some(ident) = unary.arg.as_ident() {
-        let name = ident.sym.as_ref();
+        let name = ident.sym.as_str();
 
         if is_built_in_constructor(name, browser) {
             return is_global(ident, unresolved).then_some(FUN);
@@ -82,7 +82,7 @@ fn evaluate_typeof(unary: &UnaryExpr, unresolved: Mark, browser: bool) -> Option
     None
 }
 
-fn evaluate_bin(
+fn evaluate_bin_expr(
     a: &Expr,
     b: &Expr,
     op: &BinaryOp,
@@ -100,52 +100,50 @@ fn evaluate_bin(
             });
         }
 
-        if unary.op == UnaryOp::Void && unary.arg.as_lit().is_some_and(Lit::is_num) {
-            if let Some(member) = b.as_member() {
-                return evaluate_member(member, unresolved, browser)
-                    .map(|_| matches!(op, BinaryOp::NotEq | BinaryOp::NotEqEq));
-            }
-        }
-    } else if is_undefined(a, unresolved) {
-        if let Some(member) = b.as_member() {
+        if unary.op == UnaryOp::Void
+            && unary.arg.as_lit().is_some_and(Lit::is_num)
+            && let Some(member) = b.as_member()
+        {
             return evaluate_member(member, unresolved, browser)
                 .map(|_| matches!(op, BinaryOp::NotEq | BinaryOp::NotEqEq));
         }
+    } else if is_undefined(a, unresolved)
+        && let Some(member) = b.as_member()
+    {
+        return evaluate_member(member, unresolved, browser)
+            .map(|_| matches!(op, BinaryOp::NotEq | BinaryOp::NotEqEq));
     }
 
     None
 }
 
-pub fn evaluate(bin: &BinExpr, unresolved: Mark, browser: bool) -> Option<bool> {
-    match &bin.op {
-        BinaryOp::In => {
-            if let Some(key) = bin
-                .left
-                .as_lit()
-                .and_then(Lit::as_str)
-                .and_then(|str| str.value.as_str())
-            {
-                if let Some(ident) = bin.right.as_ident() {
-                    if is_static_method(ident.sym.as_ref(), key, browser) {
-                        return is_global(ident, unresolved).then_some(true);
-                    }
-                } else if let Some(memb) = bin.right.as_member() {
-                    if let Some(ident) = as_prototype(memb) {
-                        let name = ident.sym.as_ref();
+pub fn evaluate_bin(bin: &BinExpr, unresolved_mark: Mark, browser: bool) -> Option<bool> {
+    evaluate_bin_expr(&bin.left, &bin.right, &bin.op, unresolved_mark, browser)
+        .or_else(|| evaluate_bin_expr(&bin.right, &bin.left, &bin.op, unresolved_mark, browser))
+}
 
-                        if is_prototype_method(name, key)
-                            || (name == "RegExp" && is_regexp_prototype_property(key))
-                            || (name == "Symbol" && key == "description")
-                        {
-                            return is_global(ident, unresolved).then_some(true);
-                        }
-                    }
-                }
+pub fn evaluate_in(bin: &BinExpr, unresolved: Mark, browser: bool) -> Option<bool> {
+    if let Some(key) = bin
+        .left
+        .as_lit()
+        .and_then(Lit::as_str)
+        .and_then(|str| str.value.as_str())
+    {
+        if let Some(ident) = bin.right.as_ident() {
+            if is_static_method(ident.sym.as_str(), key, browser) {
+                return is_global(ident, unresolved).then_some(true);
             }
-        }
-        _ => {
-            return evaluate_bin(&bin.left, &bin.right, &bin.op, unresolved, browser)
-                .or_else(|| evaluate_bin(&bin.right, &bin.left, &bin.op, unresolved, browser))
+        } else if let Some(memb) = bin.right.as_member()
+            && let Some(ident) = as_prototype(memb)
+        {
+            let name = ident.sym.as_str();
+
+            if is_prototype_method(name, key)
+                || is_regexp_prototype_property(name, key)
+                || (name == "Symbol" && key == "description")
+            {
+                return is_global(ident, unresolved).then_some(true);
+            }
         }
     }
 
