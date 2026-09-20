@@ -125,9 +125,9 @@ fn evaluate_bin_expr(
     None
 }
 
-pub fn evaluate_bin(bin: &BinExpr, unresolved_mark: SyntaxContext, browser: bool) -> Option<bool> {
-    evaluate_bin_expr(&bin.left, &bin.right, &bin.op, unresolved_mark, browser)
-        .or_else(|| evaluate_bin_expr(&bin.right, &bin.left, &bin.op, unresolved_mark, browser))
+pub fn evaluate_bin(bin: &BinExpr, unresolved_ctxt: SyntaxContext, browser: bool) -> Option<bool> {
+    evaluate_bin_expr(&bin.left, &bin.right, &bin.op, unresolved_ctxt, browser)
+        .or_else(|| evaluate_bin_expr(&bin.right, &bin.left, &bin.op, unresolved_ctxt, browser))
 }
 
 pub fn evaluate_in(bin: &BinExpr, unresolved_ctxt: SyntaxContext, browser: bool) -> Option<bool> {
