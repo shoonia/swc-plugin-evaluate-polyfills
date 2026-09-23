@@ -129,6 +129,7 @@ pub fn is_static_method(obj: &str, prop: &str, browser: bool) -> bool {
                             | "getElementById"
                             | "getElementsByTagName"
                             | "getElementsByClassName"
+                            | "createElement"
                             | "addEventListener"
                             | "removeEventListener"
                     ),
