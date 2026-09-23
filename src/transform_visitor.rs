@@ -95,10 +95,10 @@ impl VisitMut for TransformVisitor {
                             bin.right.take()
                         };
                     } else if let Some(value) = as_bool_value(&bin.right) {
-                        *expr = *if value {
+                        *expr = if value {
                             replace_to_bool(expr, value).into()
                         } else {
-                            bin.left.take()
+                            *bin.left.take()
                         }
                     }
                 }
@@ -110,11 +110,23 @@ impl VisitMut for TransformVisitor {
                             bin.left.take()
                         };
                     } else if let Some(value) = as_bool_value(&bin.right) {
-                        *expr = *if value {
-                            bin.left.take()
+                        *expr = if value {
+                            *bin.left.take()
                         } else {
                             replace_to_bool(expr, value).into()
                         };
+                    }
+                }
+                BinaryOp::Lt => {
+                    if let Some(unary) = bin.left.as_unary()
+                        && evaluate_typeof(unary, self.unresolved_ctxt, self.browser).is_some()
+                        && bin
+                            .right
+                            .as_lit()
+                            .and_then(Lit::as_str)
+                            .is_some_and(|s| s.value == "u")
+                    {
+                        *expr = replace_to_bool(expr, true).into();
                     }
                 }
                 _ => {}
@@ -139,8 +151,8 @@ impl VisitMut for TransformVisitor {
             }
             Expr::Paren(paren) => {
                 if let Some(value) = self.checker(&paren.expr) {
-                    *expr = *if value {
-                        paren.expr.take()
+                    *expr = if value {
+                        *paren.expr.take()
                     } else {
                         replace_to_bool(expr, value).into()
                     };

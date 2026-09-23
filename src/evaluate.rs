@@ -62,7 +62,7 @@ pub fn evaluate_member(
     None
 }
 
-fn evaluate_typeof(
+pub fn evaluate_typeof(
     unary: &UnaryExpr,
     unresolved_ctxt: SyntaxContext,
     browser: bool,
