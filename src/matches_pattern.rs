@@ -1,8 +1,8 @@
-use swc_core::ecma::ast::Expr;
+use swc_core::{common::SyntaxContext, ecma::ast::Expr};
 
 pub const OBJ_HAS_OWN_PROPERTY_CALL: &[&str] = &["Object", "prototype", "hasOwnProperty", "call"];
 
-pub fn matches_pattern(expr: &Expr, parts: &[&str]) -> bool {
+pub fn matches_pattern(expr: &Expr, parts: &[&str], ctxt: SyntaxContext) -> bool {
     let mut node = expr;
 
     for part in parts[1..].iter().rev() {
@@ -17,5 +17,6 @@ pub fn matches_pattern(expr: &Expr, parts: &[&str]) -> bool {
         node = &member.obj;
     }
 
-    node.as_ident().is_some_and(|i| i.sym == parts[0])
+    node.as_ident()
+        .is_some_and(|i| i.sym == parts[0] && i.ctxt == ctxt)
 }

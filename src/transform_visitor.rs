@@ -59,10 +59,10 @@ impl VisitMut for TransformVisitor {
             }
             Stmt::If(if_stmt) => {
                 if let Some(value) = self.checker(&if_stmt.test) {
-                    *stmt = *if value {
-                        if_stmt.cons.take()
-                    } else if let Some(ref mut alt) = if_stmt.alt {
-                        alt.take()
+                    *stmt = if value {
+                        *if_stmt.cons.take()
+                    } else if let Some(alt) = &mut if_stmt.alt {
+                        *alt.take()
                     } else {
                         EmptyStmt { span: if_stmt.span }.into()
                     }
@@ -141,11 +141,9 @@ impl VisitMut for TransformVisitor {
                 }
             }
             Expr::Unary(unary) => {
-                if unary.op != UnaryOp::Bang {
-                    return;
-                }
-
-                if let Some(value) = self.checker(&unary.arg) {
+                if unary.op == UnaryOp::Bang
+                    && let Some(value) = self.checker(&unary.arg)
+                {
                     *expr = replace_to_bool(expr, !value).into();
                 }
             }
@@ -167,7 +165,7 @@ impl VisitMut for TransformVisitor {
 
         if call.args.len() == 2
             && let Some(expr) = call.callee.as_expr()
-            && matches_pattern(expr, OBJ_HAS_OWN_PROPERTY_CALL)
+            && matches_pattern(expr, OBJ_HAS_OWN_PROPERTY_CALL, self.unresolved_ctxt)
         {
             call.callee = Callee::Expr(
                 MemberExpr {
