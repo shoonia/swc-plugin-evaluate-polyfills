@@ -6,7 +6,7 @@ project_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 target_dir="$project_dir/target/wasm32-wasip1/release"
 wasm_file="$target_dir/swc_plugin_evaluate_polyfills.wasm"
 optimized_file="$wasm_file.tmp"
-output_file="$project_dir/swc_plugin_evaluate_polyfills.wasm"
+output_file="$project_dir/index.wasm"
 
 trap 'rm -f "$optimized_file"' EXIT HUP INT TERM
 

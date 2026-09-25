@@ -3,12 +3,12 @@
   "version": "0.1.2",
   "type": "module",
   "description": "An SWC plugin that statically evaluates inline polyfill checks at build time.",
-  "main": "swc_plugin_evaluate_polyfills.wasm",
+  "main": "index.wasm",
   "exports": {
-    ".": "./swc_plugin_evaluate_polyfills.wasm"
+    ".": "./index.wasm"
   },
   "files": [
-    "swc_plugin_evaluate_polyfills.wasm"
+    "index.wasm"
   ],
   "scripts": {
     "build": "sh build.sh",
