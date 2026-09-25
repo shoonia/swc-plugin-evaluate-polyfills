@@ -326,6 +326,7 @@ pub fn is_built_in_constructor(name: &str, browser: bool) -> bool {
             | "Uint16Array"
             | "Int32Array"
             | "Uint32Array"
+            | "Float16Array"
             | "Float32Array"
             | "Float64Array"
             | "DataView"
@@ -374,6 +375,7 @@ pub fn is_built_in_constructor(name: &str, browser: bool) -> bool {
                 | "IntersectionObserver"
                 | "PerformanceObserver"
                 | "ResizeObserver"
+                | "Worker"
         )
 }
 
