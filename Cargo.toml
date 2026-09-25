@@ -1,7 +1,7 @@
 [package]
 name = "swc-plugin-evaluate-polyfills"
 description = "An SWC plugin that statically evaluates inline polyfill checks at build time."
-version = "0.1.1"
+version = "0.1.2"
 edition = "2024"
 authors = ["Alexander Zaytsev <zaytsev126@gmail.com>"]
 license = "MIT"
