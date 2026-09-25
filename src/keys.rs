@@ -343,6 +343,7 @@ pub fn is_built_in_constructor(name: &str, browser: bool) -> bool {
             | "BigInt64Array"
             | "BigUint64Array"
             | "WeakRef"
+            | "MessageChannel"
             | "FinalizationRegistry"
             | "AggregateError"
             | "ReadableStream"

@@ -165,11 +165,8 @@ impl VisitMut for TransformVisitor {
     fn visit_mut_call_expr(&mut self, call: &mut CallExpr) {
         call.visit_mut_children_with(self);
 
-        if call.args.len() != 2 {
-            return;
-        }
-
-        if let Some(expr) = call.callee.as_expr()
+        if call.args.len() == 2
+            && let Some(expr) = call.callee.as_expr()
             && matches_pattern(expr, OBJ_HAS_OWN_PROPERTY_CALL)
         {
             call.callee = Callee::Expr(
