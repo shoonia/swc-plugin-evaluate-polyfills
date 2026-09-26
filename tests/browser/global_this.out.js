@@ -4,7 +4,7 @@ function ba(a) {
         globalThis,
         a,
         window,
-        "object" == typeof self && self,
+        self,
         "object" == typeof global && global
     ];
     for(var b = 0; b < a.length; ++b){

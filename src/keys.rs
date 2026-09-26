@@ -119,9 +119,12 @@ pub fn is_static_method(obj: &str, prop: &str, browser: bool) -> bool {
             prop,
             "canParse" | "createObjectURL" | "parse" | "revokeObjectURL"
         ),
+        "globalThis" => is_built_in_constructor(prop, browser),
         _ => {
             browser
                 && match obj {
+                    "window" => is_built_in_constructor(prop, browser),
+                    "self" => is_built_in_constructor(prop, browser),
                     "document" => matches!(
                         prop,
                         "querySelector"
@@ -133,7 +136,7 @@ pub fn is_static_method(obj: &str, prop: &str, browser: bool) -> bool {
                             | "addEventListener"
                             | "removeEventListener"
                     ),
-                    "window" => is_built_in_constructor(prop, browser),
+                    "crypto" => prop == "getRandomValues",
                     _ => false,
                 }
         }
@@ -388,6 +391,7 @@ pub fn is_built_in_member(name: &str, browser: bool) -> bool {
         && matches!(
             name,
             "window"
+                | "self"
                 | "document"
                 | "navigator"
                 | "navigation"
@@ -396,5 +400,6 @@ pub fn is_built_in_member(name: &str, browser: bool) -> bool {
                 | "history"
                 | "console"
                 | "performance"
+                | "crypto"
         ))
 }
