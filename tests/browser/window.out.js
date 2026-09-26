@@ -15,3 +15,15 @@ var S = function() {
     R(a);
     return b;
 }();
+!function() {
+    "use strict";
+    var o = !!window.document.createElement, i = {
+        canUseDOM: o,
+        canUseWorkers: true,
+        canUseEventListeners: o,
+        canUseViewport: o
+    };
+    void 0 === (r = (function() {
+        return i;
+    }).call(t, n, t, e)) || (e.exports = r);
+}();

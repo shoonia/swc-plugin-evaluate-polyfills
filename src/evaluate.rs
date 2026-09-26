@@ -45,6 +45,10 @@ pub fn evaluate_member(
                 return is_global(obj, unresolved_ctxt).then_some(FUN);
             }
 
+            if is_member_object_property(o, p, browser) {
+                return is_global(obj, unresolved_ctxt).then_some(OBJ);
+            }
+
             if is_well_known_symbol(o, p) {
                 return is_global(obj, unresolved_ctxt).then_some(SYM);
             }
@@ -78,7 +82,7 @@ pub fn evaluate_typeof(
     if let Some(ident) = unary.arg.as_ident() {
         let name = ident.sym.as_str();
 
-        if is_built_in_constructor(name, browser) {
+        if is_built_in_constructor_or_fn(name, browser) {
             return is_global(ident, unresolved_ctxt).then_some(FUN);
         }
 

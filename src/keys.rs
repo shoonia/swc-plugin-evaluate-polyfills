@@ -119,12 +119,12 @@ pub fn is_static_method(obj: &str, prop: &str, browser: bool) -> bool {
             prop,
             "canParse" | "createObjectURL" | "parse" | "revokeObjectURL"
         ),
-        "globalThis" => is_built_in_constructor(prop, browser),
+        "globalThis" => is_built_in_constructor_or_fn(prop, browser),
         _ => {
             browser
                 && match obj {
-                    "window" => is_built_in_constructor(prop, browser),
-                    "self" => is_built_in_constructor(prop, browser),
+                    "window" => is_built_in_constructor_or_fn(prop, browser),
+                    "self" => is_built_in_constructor_or_fn(prop, browser),
                     "document" => matches!(
                         prop,
                         "querySelector"
@@ -317,7 +317,7 @@ pub fn is_well_known_symbol(obj: &str, prop: &str) -> bool {
         )
 }
 
-pub fn is_built_in_constructor(name: &str, browser: bool) -> bool {
+pub fn is_built_in_constructor_or_fn(name: &str, browser: bool) -> bool {
     matches!(
         name,
         "Blob"
@@ -401,5 +401,20 @@ pub fn is_built_in_member(name: &str, browser: bool) -> bool {
                 | "console"
                 | "performance"
                 | "crypto"
+                | "screen"
         ))
+}
+
+pub fn is_member_object_property(obj: &str, name: &str, browser: bool) -> bool {
+    match obj {
+        "globalThis" => is_built_in_member(name, browser),
+        _ => {
+            browser
+                && match obj {
+                    "window" => is_built_in_member(name, browser),
+                    "self" => is_built_in_member(name, browser),
+                    _ => false,
+                }
+        }
+    }
 }

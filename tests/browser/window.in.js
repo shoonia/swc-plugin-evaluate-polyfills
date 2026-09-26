@@ -16,3 +16,18 @@ var S = function () {
   R(a);
   return b
 }()
+
+!function () {
+  "use strict";
+  var o = !("undefined" == typeof window || !window.document || !window.document.createElement)
+    , i = {
+      canUseDOM: o,
+      canUseWorkers: "undefined" != typeof Worker,
+      canUseEventListeners: o && !(!window.addEventListener && !window.attachEvent),
+      canUseViewport: o && !!window.screen
+    };
+  void 0 === (r = function () {
+    return i
+  }
+    .call(t, n, t, e)) || (e.exports = r)
+}()
