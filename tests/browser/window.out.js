@@ -8,7 +8,6 @@ var S = function() {
     function a() {
         b = !1;
     }
-    ;
     var b = !0;
     Q(a);
     window.postMessage("", "*");

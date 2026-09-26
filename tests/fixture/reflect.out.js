@@ -12,7 +12,6 @@ function a(e, n, t) {
 }
 // 1 - Reflect.construct
 function A() {
-    ;
     if (Reflect.construct.sham) return !1;
     return !0;
     try {

@@ -48,6 +48,11 @@ impl TransformVisitor {
 }
 
 impl VisitMut for TransformVisitor {
+    fn visit_mut_stmts(&mut self, stmts: &mut Vec<Stmt>) {
+        stmts.visit_mut_children_with(self);
+        stmts.retain(|stmt| !stmt.is_empty());
+    }
+
     fn visit_mut_stmt(&mut self, stmt: &mut Stmt) {
         stmt.visit_mut_children_with(self);
 
