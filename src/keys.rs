@@ -2,8 +2,10 @@ use std::matches;
 
 pub fn is_static_method(obj: &str, prop: &str, browser: bool) -> bool {
     match obj {
-        "Array" => matches!(prop, "from" | "fromAsync" | "isArray" | "of"),
+        "Array" => matches!(prop, "from" | "of" | "fromAsync" | "isArray"),
         "ArrayBuffer" => prop == "isView",
+        // "Uint8Array" => matches!(prop, "from" | "of" | "fromHex" | "fromBase64"),
+        o if is_array_like_constructor(o) => matches!(prop, "from" | "of"),
         "Atomics" => matches!(
             prop,
             "add"
@@ -123,8 +125,7 @@ pub fn is_static_method(obj: &str, prop: &str, browser: bool) -> bool {
         _ => {
             browser
                 && match obj {
-                    "window" => is_built_in_constructor_or_fn(prop, browser),
-                    "self" => is_built_in_constructor_or_fn(prop, browser),
+                    "window" | "self" => is_built_in_constructor_or_fn(prop, browser),
                     "document" => matches!(
                         prop,
                         "querySelector"
@@ -411,8 +412,7 @@ pub fn is_member_object_property(obj: &str, name: &str, browser: bool) -> bool {
         _ => {
             browser
                 && match obj {
-                    "window" => is_built_in_member(name, browser),
-                    "self" => is_built_in_member(name, browser),
+                    "window" | "self" => is_built_in_member(name, browser),
                     _ => false,
                 }
         }
