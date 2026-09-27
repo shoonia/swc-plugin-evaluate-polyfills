@@ -356,17 +356,22 @@ pub fn is_built_in_constructor_or_fn(name: &str, browser: bool) -> bool {
             | "TextEncoderStream"
             | "TextDecoderStream"
             | "TransformStream"
+            | "Iterator"
+            | "encodeURI"
+            | "decodeURI"
             | "encodeURIComponent"
             | "decodeURIComponent"
-            | "Iterator"
+            | "atob"
+            | "btoa"
+            | "queueMicrotask"
+            | "setTimeout"
+            | "clearTimeout"
+            | "setInterval"
+            | "clearInterval"
     ) || browser
         && matches!(
             name,
-            "setTimeout"
-                | "clearTimeout"
-                | "setInterval"
-                | "clearInterval"
-                | "requestAnimationFrame"
+            "requestAnimationFrame"
                 | "cancelAnimationFrame"
                 | "requestIdleCallback"
                 | "cancelIdleCallback"
@@ -381,6 +386,7 @@ pub fn is_built_in_constructor_or_fn(name: &str, browser: bool) -> bool {
                 | "PerformanceObserver"
                 | "ResizeObserver"
                 | "Worker"
+                | "XMLHttpRequest"
         )
 }
 
