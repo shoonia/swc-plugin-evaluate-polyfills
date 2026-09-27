@@ -276,6 +276,19 @@ pub fn is_prototype_method(obj: &str, prop: &str) -> bool {
                 | "getFloat16"
                 | "setFloat16"
         ),
+        "FormData" => matches!(
+            prop,
+            "append"
+                | "delete"
+                | "get"
+                | "getAll"
+                | "has"
+                | "set"
+                | "keys"
+                | "values"
+                | "entries"
+                | "forEach"
+        ),
         _ => false,
     }
 }
@@ -357,6 +370,7 @@ pub fn is_built_in_constructor_or_fn(name: &str, browser: bool) -> bool {
             | "TextDecoderStream"
             | "TransformStream"
             | "Iterator"
+            | "FormData"
             | "encodeURI"
             | "decodeURI"
             | "encodeURIComponent"
