@@ -120,14 +120,13 @@ impl VisitMut for TransformVisitor {
                         };
                     }
                 }
-                BinaryOp::Lt => {
+                BinaryOp::Lt | BinaryOp::Gt => {
                     if evaluate_comparison(&bin.left, &bin.right, self.ctxt, self.browser) {
-                        *expr = replace_to_bool(expr, true).into();
-                    }
-                }
-                BinaryOp::Gt => {
-                    if evaluate_comparison(&bin.right, &bin.left, self.ctxt, self.browser) {
-                        *expr = replace_to_bool(expr, true).into();
+                        let value = bin.op == BinaryOp::Lt;
+                        *expr = replace_to_bool(expr, value).into();
+                    } else if evaluate_comparison(&bin.right, &bin.left, self.ctxt, self.browser) {
+                        let value = bin.op == BinaryOp::Gt;
+                        *expr = replace_to_bool(expr, value).into();
                     }
                 }
                 _ => {}

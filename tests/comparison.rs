@@ -33,6 +33,6 @@ fn no_comparison() {
     ];
 
     for input in cases.iter() {
-        run_test_browser(input, *input);
+        run_test_browser(input, "let x = false");
     }
 }
