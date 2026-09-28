@@ -66,7 +66,7 @@ pub fn evaluate_member(
     None
 }
 
-pub fn evaluate_typeof(
+fn evaluate_typeof(
     unary: &UnaryExpr,
     unresolved_ctxt: SyntaxContext,
     browser: bool,
@@ -160,4 +160,18 @@ pub fn evaluate_in(bin: &BinExpr, unresolved_ctxt: SyntaxContext, browser: bool)
     }
 
     None
+}
+
+pub fn evaluate_comparison(
+    unary: &Expr,
+    u: &Expr,
+    unresolved_ctxt: SyntaxContext,
+    browser: bool,
+) -> bool {
+    unary.as_unary().is_some_and(|un| {
+        evaluate_typeof(un, unresolved_ctxt, browser).is_some()
+            && u.as_lit()
+                .and_then(Lit::as_str)
+                .is_some_and(|s| s.value == "u")
+    })
 }

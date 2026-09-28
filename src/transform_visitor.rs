@@ -123,14 +123,22 @@ impl VisitMut for TransformVisitor {
                     }
                 }
                 BinaryOp::Lt => {
-                    if let Some(unary) = bin.left.as_unary()
-                        && evaluate_typeof(unary, self.unresolved_ctxt, self.browser).is_some()
-                        && bin
-                            .right
-                            .as_lit()
-                            .and_then(Lit::as_str)
-                            .is_some_and(|s| s.value == "u")
-                    {
+                    if evaluate_comparison(
+                        &bin.left,
+                        &bin.right,
+                        self.unresolved_ctxt,
+                        self.browser,
+                    ) {
+                        *expr = replace_to_bool(expr, true).into();
+                    }
+                }
+                BinaryOp::Gt => {
+                    if evaluate_comparison(
+                        &bin.right,
+                        &bin.left,
+                        self.unresolved_ctxt,
+                        self.browser,
+                    ) {
                         *expr = replace_to_bool(expr, true).into();
                     }
                 }
