@@ -25,16 +25,14 @@ fn replace_to_bool(expr: &Expr, value: bool) -> Bool {
 }
 
 pub struct TransformVisitor {
-    pub unresolved_ctxt: SyntaxContext,
+    pub ctxt: SyntaxContext,
     pub browser: bool,
 }
 
 impl TransformVisitor {
     fn checker(&self, expr: &Expr) -> Option<bool> {
         match expr {
-            Expr::Member(member) => {
-                evaluate_member(member, self.unresolved_ctxt, self.browser).map(|_| true)
-            }
+            Expr::Member(member) => evaluate_member(member, self.ctxt, self.browser).map(|_| true),
             Expr::Bin(bin) => {
                 if matches!(bin.op, BinaryOp::LogicalOr | BinaryOp::NullishCoalescing) {
                     self.checker(&bin.left).or_else(|| self.checker(&bin.right))
@@ -83,12 +81,12 @@ impl VisitMut for TransformVisitor {
         match expr {
             Expr::Bin(bin) => match &bin.op {
                 BinaryOp::In => {
-                    if let Some(value) = evaluate_in(bin, self.unresolved_ctxt, self.browser) {
+                    if let Some(value) = evaluate_in(bin, self.ctxt, self.browser) {
                         *expr = replace_to_bool(expr, value).into();
                     }
                 }
                 BinaryOp::EqEq | BinaryOp::EqEqEq | BinaryOp::NotEq | BinaryOp::NotEqEq => {
-                    if let Some(value) = evaluate_bin(bin, self.unresolved_ctxt, self.browser) {
+                    if let Some(value) = evaluate_bin(bin, self.ctxt, self.browser) {
                         *expr = replace_to_bool(expr, value).into();
                     }
                 }
@@ -123,22 +121,12 @@ impl VisitMut for TransformVisitor {
                     }
                 }
                 BinaryOp::Lt => {
-                    if evaluate_comparison(
-                        &bin.left,
-                        &bin.right,
-                        self.unresolved_ctxt,
-                        self.browser,
-                    ) {
+                    if evaluate_comparison(&bin.left, &bin.right, self.ctxt, self.browser) {
                         *expr = replace_to_bool(expr, true).into();
                     }
                 }
                 BinaryOp::Gt => {
-                    if evaluate_comparison(
-                        &bin.right,
-                        &bin.left,
-                        self.unresolved_ctxt,
-                        self.browser,
-                    ) {
+                    if evaluate_comparison(&bin.right, &bin.left, self.ctxt, self.browser) {
                         *expr = replace_to_bool(expr, true).into();
                     }
                 }
@@ -178,7 +166,7 @@ impl VisitMut for TransformVisitor {
 
         if call.args.len() == 2
             && let Some(expr) = call.callee.as_expr()
-            && matches_pattern(expr, OBJ_HAS_OWN_PROPERTY_CALL, self.unresolved_ctxt)
+            && matches_pattern(expr, OBJ_HAS_OWN_PROPERTY_CALL, self.ctxt)
         {
             call.callee = Callee::Expr(
                 MemberExpr {

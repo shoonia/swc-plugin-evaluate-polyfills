@@ -21,7 +21,7 @@ pub fn visitor(browser: bool) -> impl VisitMut + Pass {
     (
         resolver(unresolved_mark, Mark::new(), false),
         visit_mut_pass(TransformVisitor {
-            unresolved_ctxt: SyntaxContext::empty().apply_mark(unresolved_mark),
+            ctxt: SyntaxContext::empty().apply_mark(unresolved_mark),
             browser,
         }),
     )

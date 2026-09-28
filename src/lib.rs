@@ -25,7 +25,7 @@ pub fn process_transform(program: Program, data: TransformPluginProgramMetadata)
         .unwrap_or_default();
 
     program.apply(visit_mut_pass(&mut TransformVisitor {
-        unresolved_ctxt: SyntaxContext::empty().apply_mark(data.unresolved_mark),
+        ctxt: SyntaxContext::empty().apply_mark(data.unresolved_mark),
         browser: options.browser,
     }))
 }
