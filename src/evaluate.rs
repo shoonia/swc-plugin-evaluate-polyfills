@@ -111,7 +111,7 @@ fn evaluate_bin_expr(
             return evaluate_member(member, ctxt, browser)
                 .map(|_| matches!(op, BinaryOp::NotEq | BinaryOp::NotEqEq));
         }
-    } else if is_undefined(a, ctxt)
+    } else if (is_undefined(a, ctxt) || a.is_null())
         && let Some(member) = b.as_member()
     {
         return evaluate_member(member, ctxt, browser)

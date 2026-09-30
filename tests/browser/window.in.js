@@ -31,3 +31,13 @@ var S = function () {
   }
     .call(t, n, t, e)) || (e.exports = r)
 }()
+
+function yD(e) {
+  if ("undefined" == typeof window || null == window.navigator)
+    return !1;
+  let t = window.navigator.userAgentData?.brands;
+  return Array.isArray(t) && t.some(t => e.test(t.brand)) || e.test(window.navigator.userAgent)
+}
+function CD(e) {
+  return "undefined" != typeof window && null != window.navigator && e.test(window.navigator.userAgentData?.platform || window.navigator.platform)
+}

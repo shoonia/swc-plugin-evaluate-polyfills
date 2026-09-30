@@ -26,3 +26,10 @@ var S = function() {
         return i;
     }).call(t, n, t, e)) || (e.exports = r);
 }();
+function yD(e1) {
+    let t1 = window.navigator.userAgentData?.brands;
+    return Array.isArray(t1) && t1.some((t1)=>e1.test(t1.brand)) || e1.test(window.navigator.userAgent);
+}
+function CD(e1) {
+    return e1.test(window.navigator.userAgentData?.platform || window.navigator.platform);
+}
