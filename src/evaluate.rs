@@ -22,9 +22,10 @@ fn as_prototype(obj: &MemberExpr) -> Option<&Ident> {
     }
 }
 
-fn is_undefined(expr: &Expr, ctxt: SyntaxContext) -> bool {
+fn is_nullish(expr: &Expr, ctxt: SyntaxContext) -> bool {
     expr.as_ident()
         .is_some_and(|i| i.sym == "undefined" && is_global(i, ctxt))
+        || expr.is_null()
 }
 
 pub fn evaluate_member(member: &MemberExpr, ctxt: SyntaxContext, browser: bool) -> Option<&str> {
@@ -111,7 +112,7 @@ fn evaluate_bin_expr(
             return evaluate_member(member, ctxt, browser)
                 .map(|_| matches!(op, BinaryOp::NotEq | BinaryOp::NotEqEq));
         }
-    } else if (is_undefined(a, ctxt) || a.is_null())
+    } else if is_nullish(a, ctxt)
         && let Some(member) = b.as_member()
     {
         return evaluate_member(member, ctxt, browser)
