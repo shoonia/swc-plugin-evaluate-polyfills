@@ -397,6 +397,7 @@ pub fn is_built_in_constructor_or_fn(name: &str, browser: bool) -> bool {
                 | "addEventListener"
                 | "removeEventListener"
                 | "dispatchEvent"
+                | "matchMedia"
                 | "CustomEvent"
                 | "MutationObserver"
                 | "IntersectionObserver"
@@ -428,6 +429,7 @@ pub fn is_built_in_member(name: &str, browser: bool) -> bool {
                 | "performance"
                 | "crypto"
                 | "screen"
+                | "visualViewport"
         ))
 }
 
