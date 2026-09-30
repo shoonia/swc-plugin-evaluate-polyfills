@@ -405,6 +405,7 @@ pub fn is_built_in_constructor_or_fn(name: &str, browser: bool) -> bool {
                 | "ResizeObserver"
                 | "Worker"
                 | "XMLHttpRequest"
+                | "ShadowRoot"
                 | "Element"
                 | "HTMLElement"
         )
