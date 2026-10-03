@@ -1,7 +1,7 @@
 [package]
 name = "swc-plugin-evaluate-polyfills"
 description = "An SWC plugin that statically evaluates inline polyfill checks at build time."
-version = "0.1.4"
+version = "0.1.5"
 edition = "2024"
 authors = ["Alexander Zaytsev <zaytsev126@gmail.com>"]
 license = "MIT"
@@ -19,14 +19,14 @@ panic = "abort"
 [dependencies]
 serde = { version = "^1.0", features = ["derive"] }
 serde_json = "^1.0"
-swc_core = { version = "^81.0.*", features = [
+swc_core = { version = "^81.0.2", features = [
   "ecma_ast",
   "ecma_plugin_transform",
 ] }
 
 [dev-dependencies]
 testing = "27.0.0"
-swc_core = { version = "^81.0.*", features = [
+swc_core = { version = "^81.0.2", features = [
   "ecma_parser",
   "testing_transform",
 ] }
